@@ -1,0 +1,64 @@
+# Ansible learning
+
+# add hosts in /etc/ansible/hosts
+
+    [mynodes]
+    192.168.122.91
+
+# copy ssh key to base node manually
+    connect to node
+    mkdir ~/.ssh
+    cd ~/.ssh
+    nano authorized_keys
+    paste ssh pub key
+    chmod -R go= ~/.ssh
+    # go
+    nano /etc/ssh/sshd_config
+    # uncomment
+    PasswordAuthentication no
+    sudo systemctl restart ssh
+
+
+# add user as sudo
+
+    su -
+    apt-update
+    apt install sudo -y
+    exit
+    sudo -s
+    su -
+    usermod -aG sudo <username>
+    exit
+
+
+# ping nodes
+first there will be an error
+you need python 3 to all your nodes
+insure that your base vm has python 3
+
+        ansible mynodes -m ping
+        ansible -i ./inventory/hosts -m ping
+
+
+
+# todo
+
+# install docker and kubernetes on each node
+
+# configure the master node
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+mkdir $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+## kubeadm error, also in workers
+sudo rm /etc/containerd/config.toml
+sudo systemctl restart containerd
+kubeadm join 192.168.122.91:6443 --token z14h6e.7uk76awzv3lpcu2i \
+	--discovery-token-ca-cert-hash sha256:90ecd7088ca836ec96bc58afeb7e41275ac54175a13e1995cdadba9be3f368d7
+
+
+
+
+# join the workers to the cluster
+

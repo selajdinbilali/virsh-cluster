@@ -1,0 +1,18 @@
+---
+- name: Configure VMs
+  hosts: mynodes
+  become: yes
+  user: sken
+  vars:
+    ansible_become_pass: "sken"
+  tasks:
+    - name: Set hostname
+      hostname:
+        name: "{{ item }}"
+      with_items:
+        - doc
+        - gru
+        - sne
+        - snow-white
+      tags:
+        - set_hostname

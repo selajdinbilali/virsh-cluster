@@ -1,0 +1,7 @@
+---
+- name: install flannel
+  hosts: masters
+  user: sken
+  tasks:
+  - name: apply flannel network config
+    command: kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml

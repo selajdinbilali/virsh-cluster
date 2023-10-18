@@ -1,0 +1,11 @@
+---
+- name: Shutdown My Nodes
+  hosts: mynodes
+  become: yes
+  user: sken
+  vars:
+    ansible_become_pass: "sken"
+  tasks:
+    - name: Shutdown nodes
+      command: "sudo shutdown -h now"
+      become: yes

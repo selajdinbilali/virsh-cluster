@@ -1,0 +1,21 @@
+---
+- name: install docker and kubernetes
+  hosts: masters
+  become: yes
+  user: sken
+  vars:
+    ansible_become_pass: "sken"
+  tasks:
+    - name: Join the Kubernetes cluster
+      shell: sudo kubeadm join 192.168.122.69:6443 --token ipt92u.weblr1vgoeqlw0n5 --discovery-token-ca-cert-hash sha256:3351587fadb2dfae5e48983abe2ba9533853ef2a6121b230d2bf7090626cd81c
+
+    - name: Create .kube directory in user's home directory
+      file:
+        path: "{{ ansible_env.HOME }}/.kube"
+        state: directory
+
+    - name: Copy Kubernetes admin config to user's .kube directory
+      command: sudo cp -i /etc/kubernetes/admin.conf {{ ansible_env.HOME }}/.kube/config
+
+    - name: Change ownership of the Kubernetes config file
+      command: sudo chown $(id -u):$(id -g) {{ ansible_env.HOME }}/.kube/config

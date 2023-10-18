@@ -1,0 +1,12 @@
+---
+- name: Join worker nodes to the Kubernetes cluster
+  hosts: workers
+  become: yes
+  user: sken
+  vars:
+    ansible_become_pass: "sken"
+  tasks:
+    - name: Turn off swap
+      command: swapoff -a
+    - name: Join worker nodes to the cluster
+      command: kubeadm join 192.168.122.69:6443 --token 2qph8d.pevow27k8o6a5ftr --discovery-token-ca-cert-hash sha256:17a08407265a01d639eebe5ada63478e28af5ca061c35836ab18c9246c70f35e

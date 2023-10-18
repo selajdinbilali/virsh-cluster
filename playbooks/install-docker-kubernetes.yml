@@ -1,0 +1,44 @@
+---
+- name: install docker and kubernetes
+  hosts: mynodes
+  become: yes
+  user: sken
+  vars:
+    ansible_become_pass: "sken"
+  tasks:
+  - name: Download Docker installation script
+    get_url:
+      url: https://get.docker.com
+      dest: /tmp/get-docker.sh
+      mode: '0644'
+    become: yes
+
+  - name: Run Docker installation script
+    command: sh /tmp/get-docker.sh
+    become: yes
+
+  - name: Add Kubernetes apt repository key
+    apt_key:
+      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      state: present
+
+  - name: Add Kubernetes apt repository
+    apt_repository:
+      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+
+  - name: Install kubelet and kube-proxy
+    apt:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - kubelet
+      - kubeadm
+      - kubectl
+      - kubernetes-cni
+
+  - name: Enable kubelet service
+    service:
+      name: kubelet
+      enabled: yes
+      state: started
