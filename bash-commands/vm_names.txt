@@ -1,3 +1,2 @@
-control
+master
 worker-01
-worker-02

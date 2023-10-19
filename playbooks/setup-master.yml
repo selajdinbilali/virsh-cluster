@@ -1,0 +1,38 @@
+---
+- name: Install Docker and Kubernetes on Debian
+  hosts: masters
+  become: yes
+  user: sken
+  vars:
+    ansible_become_pass: "sken"
+  tasks:
+    - name: Enable kubelet service
+      service:
+        name: kubelet
+        enabled: yes
+      become: true
+
+    - name: Pull Kubernetes images
+      command: kubeadm config images pull
+
+    - name: Initialize Kubernetes master node
+      command: kubeadm init --pod-network-cidr=192.168.89.0/16
+      args:
+        creates: /etc/kubernetes/admin.conf
+      register: kubeadm_output
+      become: true
+
+    - name: Allow traffic on port 6443
+      ufw:
+        rule: allow
+        port: 6443
+        proto: tcp
+      become: true
+
+    - name: Configure kubectl for the user
+      command: "{{ item }}"
+      with_items:
+        - "mkdir -p $HOME/.kube"
+        - "cp -f /etc/kubernetes/admin.conf $HOME/.kube/config"
+      environment:
+        HOME: "{{ ansible_env.HOME }}"

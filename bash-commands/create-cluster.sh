@@ -4,10 +4,6 @@
 base_vm_name="debian12-base"
 base_vm_disk="/var/lib/libvirt/images/debian12-base.qcow2"
 
-# List of VM names
-# 7 dwarfs 3 letters doc, sneezy, grumpy, happy, bashful, sleepy, dopey
-clone_names=("doc" "sne" "gru" "snow-white")
-
 
 # Clone the base VM and customize network settings
 while IFS= read -r vm_name; do
